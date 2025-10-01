@@ -78,6 +78,23 @@ export default function Page() {
     }
   }, [billings])
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("orders")
+        localStorage.removeItem("users")
+        localStorage.removeItem("puntosTUU")
+        localStorage.removeItem("billings")
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [])
+
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [filterEstado, setFilterEstado] = useState("todos")
   const [filterPuntoTUU, setFilterPuntoTUU] = useState("todos")
@@ -421,16 +438,7 @@ export default function Page() {
 
   const deletePunto = () => {
     if (puntoToDelete) {
-      setUsers(
-        users.map((u) =>
-          u.puntoTUU === puntoToDelete.nombre
-            ? {
-                ...u,
-                activo: false,
-              }
-            : u,
-        ),
-      )
+      setUsers(users.filter((u) => u.puntoTUU !== puntoToDelete.nombre))
 
       setPuntosTUU(puntosTUU.filter((p) => p.id !== puntoToDelete.id))
       setPuntoToDelete(null)
@@ -702,7 +710,7 @@ export default function Page() {
       <DeleteConfirmationModal
         isOpen={!!puntoToDelete}
         title="Eliminar Punto TUU"
-        description="¿Estás seguro de que deseas eliminar este punto TUU? Los usuarios asociados serán desactivados."
+        description="¿Estás seguro de que deseas eliminar este punto TUU? Los usuarios asociados serán eliminados."
         itemName={puntoToDelete?.nombre || ""}
         onClose={() => setPuntoToDelete(null)}
         onConfirm={deletePunto}

@@ -1,6 +1,8 @@
 "use client"
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog"
+import { Switch } from "./ui/switch"
+import { regionesComunas } from "../data/regiones-comunas"
 import type { PuntoTUU } from "../types/order"
 
 interface PuntoModalProps {
@@ -44,24 +46,38 @@ export function PuntoModal({ isOpen, editingPunto, puntoForm, onClose, onFormCha
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Región</label>
-            <input
-              type="text"
+            <select
               value={puntoForm.region}
-              onChange={(e) => onFormChange("region", e.target.value)}
+              onChange={(e) => {
+                onFormChange("region", e.target.value)
+                onFormChange("comuna", "")
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Región"
-            />
+            >
+              <option value="">Seleccionar región</option>
+              {Object.keys(regionesComunas).map((region) => (
+                <option key={region} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Comuna</label>
-            <input
-              type="text"
+            <select
               value={puntoForm.comuna}
               onChange={(e) => onFormChange("comuna", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Comuna"
-            />
+              disabled={!puntoForm.region}
+            >
+              <option value="">Seleccionar comuna</option>
+              {puntoForm.region && regionesComunas[puntoForm.region]?.map((comuna) => (
+                <option key={comuna} value={comuna}>
+                  {comuna}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -86,17 +102,15 @@ export function PuntoModal({ isOpen, editingPunto, puntoForm, onClose, onFormCha
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="activo-punto"
-              checked={puntoForm.activo}
-              onChange={(e) => onFormChange("activo", e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
+          <div className="flex items-center justify-between">
             <label htmlFor="activo-punto" className="text-sm font-medium text-gray-700">
               Punto TUU activo
             </label>
+            <Switch
+              id="activo-punto"
+              checked={puntoForm.activo}
+              onCheckedChange={(checked) => onFormChange("activo", checked)}
+            />
           </div>
         </div>
 

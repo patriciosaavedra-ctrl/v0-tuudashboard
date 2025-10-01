@@ -1,5 +1,6 @@
 "use client"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog"
+import { Switch } from "./ui/switch"
 import type { User, PuntoTUU } from "../types/order"
 
 interface UserModalProps {
@@ -84,17 +85,15 @@ export function UserModal({ isOpen, editingUser, userForm, puntosTUU, onClose, o
             </div>
           )}
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="activo"
-              checked={userForm.activo}
-              onChange={(e) => onFormChange("activo", e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
+          <div className="flex items-center justify-between">
             <label htmlFor="activo" className="text-sm font-medium text-gray-700">
               Usuario activo
             </label>
+            <Switch
+              id="activo"
+              checked={userForm.activo}
+              onCheckedChange={(checked) => onFormChange("activo", checked)}
+            />
           </div>
         </div>
 
